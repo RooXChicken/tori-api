@@ -1,12 +1,12 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
 
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
+import https from 'https';
+import http from 'http';
+import fs from 'fs';
+import url from 'url';
 
-const CacheableLookup = require('cacheable-lookup');
+import CacheableLookup from 'cacheable-lookup';
 const cacheable = new CacheableLookup();
 
 cacheable.install(http.globalAgent);

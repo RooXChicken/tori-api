@@ -8,6 +8,7 @@
   },
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "cacheable-lookup": "^7.0.0",
     "dotenv": "^16.4.7"
