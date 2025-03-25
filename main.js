@@ -19,38 +19,48 @@ var lastQuery = Date.now();
 // queryTori();
 
 function queryTori() {
-    https.get(toriAPI, (_response) => {
-        let _body = "";
-        _response.on("data", (_chunk) => {
-            _body += _chunk;
-        });
-
-        _response.on("end", () => {
-            toriResponse = JSON.parse(_body);
-            queryMojang();
-        });
-    });
-}
-
-function queryMojang() {
-    for(let _element in toriResponse["uuid"]) {
-        https.get(`${mojangAPI}${_element}`, (_response) => {
+    try {
+        https.get(toriAPI, (_response) => {
             let _body = "";
-
             _response.on("data", (_chunk) => {
                 _body += _chunk;
             });
     
             _response.on("end", () => {
-                let _data = JSON.parse(_body);
-                if(_data.code == "minecraft.api_failure" || _data.code == "minecraft.invalid_username") {
-                    delete toriResponse["uuid"][_element];
-                }
-                else {
-                    toriResponse["uuid"][_element] = JSON.parse(_body)["data"]["player"].username;
-                }
+                toriResponse = JSON.parse(_body);
+                queryMojang();
             });
         });
+    }
+    catch(_e) {
+        console.error("Failed to query Tori API: " + _e);
+    }
+}
+
+function queryMojang() {
+    for(let _element in toriResponse["uuid"]) {
+        try {
+            https.get(`${mojangAPI}${_element}`, (_response) => {
+                let _body = "";
+    
+                _response.on("data", (_chunk) => {
+                    _body += _chunk;
+                });
+        
+                _response.on("end", () => {
+                    let _data = JSON.parse(_body);
+                    if(_data.code == "minecraft.api_failure" || _data.code == "minecraft.invalid_username") {
+                        delete toriResponse["uuid"][_element];
+                    }
+                    else {
+                        toriResponse["uuid"][_element] = JSON.parse(_body)["data"]["player"].username;
+                    }
+                });
+            });
+        }
+        catch(_e) {
+            console.error("Failed to query Player API: " + _e);
+        }
     }
 }
 
@@ -81,13 +91,6 @@ http.createServer(async function (_request, _response) {
         }
     }
     catch(_e) {
-        console.error(_e);
+        console.error("Failed to handle HTTP request: " + _e);
     }
 }).listen(25533);
-
-// function queryCourse(_response, _params) {
-//     http.get()
-//     //  => {
-//     //     _response.write(JSON.stringify(_result).toString());
-//     // });
-// }
