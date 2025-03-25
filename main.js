@@ -69,7 +69,7 @@ function queryMojang() {
 }
 
 // create our server
-https.createServer(httpsOptions, async function (_request, _response) {
+https.createServer(httpOptions, async function (_request, _response) {
     _response.setHeader("Content-Type", "text/json")
     _response.setHeader("Access-Control-Allow-Origin", "*");
     
