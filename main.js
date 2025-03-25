@@ -6,17 +6,21 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 
+const CacheableLookup = require('cacheable-lookup');
+const cacheable = new CacheableLookup();
+
+cacheable.install(http.globalAgent);
+cacheable.install(https.globalAgent);
+
 const toriAPI = "https://api.toriclient.com/launcher/online/detailed";
 const mojangAPI = "https://playerdb.co/api/player/minecraft/";
 var toriResponse = [];
 var lastQuery = Date.now();
 
-// const httpOptions = {
-//     key: fs.readFileSync(process.env.KEY_PATH),
-//     cert: fs.readFileSync(process.env.CERT_PATH),
-// };
-
-// queryTori();
+const httpOptions = {
+    key: fs.readFileSync(process.env.KEY_PATH),
+    cert: fs.readFileSync(process.env.CERT_PATH),
+};
 
 function queryTori() {
     try {
@@ -65,7 +69,7 @@ function queryMojang() {
 }
 
 // create our server
-http.createServer(async function (_request, _response) {
+https.createServer(httpsOptions, async function (_request, _response) {
     _response.setHeader("Content-Type", "text/json")
     _response.setHeader("Access-Control-Allow-Origin", "*");
     
